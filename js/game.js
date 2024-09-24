@@ -12,6 +12,11 @@ const key = {
   }
 }
 
+const gameProp = {
+  screenWidth: window.innerWidth,
+  screenHeight: window.innerHeight
+}
+
 const renderGame = () => {
   hero.keyMotion();
   // 재귀호출
@@ -23,21 +28,21 @@ const renderGame = () => {
 const windowEvent = () => {
   window.addEventListener('keydown', (e) => {
     key.keyDown[key.keyValue[e.which]] = true;
-    console.log(key.keyDown);
+    // console.log(key.keyDown);
     // console.log(e.which);
     // 누르면 true; 떼면 false;만들어주기 위해 데이터 넘겨줄라구~~
   });
   window.addEventListener('keyup', (e) => {
     // console.log(e.key)
     key.keyDown[key.keyValue[e.which]] = false;
-    console.log(key.keyDown);
+    // console.log(key.keyDown);
     // 왼쪽, 오른쪽 아니면 undefined 가 나오게 됨
   });
 }
 
 // 클래스가 추가될 때 이미지 로드되는 현상 없애기
 const loadImg = () => {
-  const preLoadImageSrc = ['../../lib/images/ninja_attack.png', ['../../lib/images/ninja_run']];
+  const preLoadImageSrc = ['../../lib/images/ninja_attack.png', '../../lib/images/ninja_run.png'];
   preLoadImageSrc.forEach(arr => {
     const img = new Image();
     img.src = arr;
@@ -51,6 +56,7 @@ const init = () => {
   loadImg();
   windowEvent();
   renderGame();
+  // console.log(hero.position())
 }
 
 window.onload = () => {
