@@ -104,7 +104,18 @@
 
 .monster_box .monster {
    height: 100%;
-   background: url(../../lib/images/monster/monster_green_run.pngs);
+   background: url(../../lib/images/monster/monster_green_run.png);
    background-size: 2242px 294px;
    animation: monster_run 1s infinite steps(8);
+}
+
+.monster_box .hp {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  font-size: 110px;
+  color: #fff;
+  text-align: center;
+  transform: translateY(-100%);
 }

@@ -8,6 +8,9 @@ const key = {
   }
 }
 
+const allMosterComProp = {
+  arr: []
+}
 
 // 수리검의 오브젝트와 배열 생성
 // 수리검 배열 attack키를 누를때 생성되는 수리검의 모든 인스턴스 저장 
@@ -28,7 +31,9 @@ const gameProp = {
 const renderGame = () => {
   hero.keyMotion();
   setGameBackground();
+  // 수리검이 생길때마다 배열에 저장되고 새로 생길때마다 그 전에 생긴 수리검도 배열로 실행되므로 성능에 문제생길 수 있음
   bulletComProp.arr.forEach((arr, i)=> {
+    // console.log(bulletComProp.arr.length)
     arr.moveBullet();
   })
   window.requestAnimationFrame(renderGame);
@@ -66,7 +71,8 @@ let monster;
 
 const init = () => {
   hero = new Hero('.hero'); 
-  monster = new Monster();
+  allMosterComProp.arr[0] = new Monster(700, 7777);
+  allMosterComProp.arr[1] = new Monster(1500, 5555);
   loadImg();
   windowEvent();
   renderGame();

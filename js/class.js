@@ -5,6 +5,7 @@ class Hero {
     this.speed = 11;
     // 히어로가 어느쪽을 보고있는지 변수 설정
     this.direction = 'right';
+    this.attackDamage = 1000;
   }
 
   keyMotion() {
@@ -104,26 +105,73 @@ class Bullet {
   } 
 
   crashBullet() {
+    for(let j=0; j<allMosterComProp.arr.length; j++) {
+
+      // 수리검이 몬스터랑 부딪히면 지워주기
+      // 수리검이 몬스터 몸안에 들어왔을때만 지워주기
+      if(this.position().left > allMosterComProp.arr[j].position().left && this.position().right < allMosterComProp.arr[j].position().right) {
+        // 수리검 배열의 길이만큼 반복하는 반복문 생성
+        // 충돌한 수리검을 배열에서 삭제
+        for(let i=0; i < bulletComProp.arr.length; i++) {
+          if(bulletComProp.arr[i] === this) {
+            bulletComProp.arr.splice(i,1);
+            this.el.remove();
+            // console.log(bulletComProp.arr);
+            allMosterComProp.arr[j].updateHp();
+          }
+        }
+      }
+    }
     // 수리검이 화면 밖을 나가면 지워주기
     if(this.position().left > gameProp.screenWidth || this.position().right < 0) {
-      this.el.remove();
+      for(let i=0; i < bulletComProp.arr.length; i++) {
+        if(bulletComProp.arr[i] === this) {
+          bulletComProp.arr.splice(i,1);
+          this.el.remove();
+          console.log(bulletComProp.arr)
+        }
+      }
     }
   }
 }
 
 class Monster {
-  constructor() {
+  constructor(positionX, hp) {
     this.parentNode = document.querySelector('.game');
     this.el = document.createElement('div');
     this.el.className = 'monster_box';
     this.elChildren = document.createElement('div');
     this.elChildren.className = 'monster';
+    this.hpNode = document.createElement('div');
+    this.hpNode.className = 'hp';
+    this.hpValue = hp;
+    this.hpTextNode = document.createTextNode(this.hpValue);
+    this.positionX = positionX;
+
 
     this.init();
   }
 
   init() {
+    this.hpNode.appendChild(this.hpTextNode);
+    this.el.appendChild(this.hpNode);
     this.el.appendChild(this.elChildren);
     this.parentNode.appendChild(this.el);
+    this.el.style.left = this.positionX + 'px';
+  }
+
+  position() {
+    return{
+      left: this.el.getBoundingClientRect().left,
+      right: this.el.getBoundingClientRect().right,
+      top: gameProp.screenHeight - this.el.getBoundingClientRect().top,
+      bottom: gameProp.screenHeight - this.el.getBoundingClientRect().top - this.el.getBoundingClientRect().height
+    }
+  } 
+
+  updateHp() {
+    this.hpValue = Math.max(0, this.hpValue - hero.attackDamage); 
+    console.log(this.hpValue); 
+    this.el.children[0].innerText = this.hpValue;
   }
 }
