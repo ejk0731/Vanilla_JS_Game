@@ -2,7 +2,7 @@ class Hero {
   constructor(el) {
     this.el = document.querySelector(el);
     this.movex = 0;
-    this.speed = 16;
+    this.speed = 11;
     // 히어로가 어느쪽을 보고있는지 변수 설정
     this.direction = 'right';
   }
@@ -12,13 +12,14 @@ class Hero {
       this.direction = 'left';
       this.el.classList.add('run');
       this.el.classList.add('flip');
-      this.movex = this.movex - this.speed;
+      this.movex = this.movex <= 0 ? 0 : this.movex - this.speed;
     } else if(key.keyDown['right']) {
       this.direction = 'right';
       this.el.classList.add('run');
       this.el.classList.remove('flip');
       this.movex = this.movex + this.speed;
     }
+
     if(key.keyDown['attack']){
       if(!bulletComProp.launch) {
         this.el.classList.add('attack');
@@ -26,15 +27,17 @@ class Hero {
         bulletComProp.launch = true;
         // console.log(bulletComProp.arr.length);
       }
-
     }
+
     if(!key.keyDown['left'] && !key.keyDown['right']) {
       this.el.classList.remove('run');
     }
+
     if(!key.keyDown['attack']){
       this.el.classList.remove('attack');
       bulletComProp.launch = false; 
     }
+
     this.el.parentNode.style.transform = `translateX(${this.movex}px)`
   }
 
@@ -71,7 +74,7 @@ class Bullet {
   init() {
     // 수리검이 생성될때 히어로의 방향값을 수리검의 방향값으로 넣어주기
     this.bulletDirection = hero.direction === 'left' ? 'left' : 'right';
-    this.x = hero.position().left + hero.size().width / 2;
+    this.x = hero.direction === 'right' ? hero.movex + hero.size().width / 2 : hero.movex - hero.size().width / 2 ;
     this.y = hero.position().bottom - hero.size().height / 2;
     this.distance = this.x;
     this.el.style.transform = `translate(${this.x}px, ${this.y}px)`;
@@ -100,12 +103,27 @@ class Bullet {
     }
   } 
 
-  // 수리검이 화면 밖을 나가면 지워주기
   crashBullet() {
+    // 수리검이 화면 밖을 나가면 지워주기
     if(this.position().left > gameProp.screenWidth || this.position().right < 0) {
       this.el.remove();
     }
   }
+}
 
-  
+class Monster {
+  constructor() {
+    this.parentNode = document.querySelector('.game');
+    this.el = document.createElement('div');
+    this.el.className = 'monster_box';
+    this.elChildren = document.createElement('div');
+    this.elChildren.className = 'monster';
+
+    this.init();
+  }
+
+  init() {
+    this.el.appendChild(this.elChildren);
+    this.parentNode.appendChild(this.el);
+  }
 }
