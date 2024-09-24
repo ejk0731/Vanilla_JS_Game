@@ -3,7 +3,9 @@ const key = {
   keyDown : {},
   keyValue : {
     37: "left",
+    38: "up",
     39: "right",
+    40: "down",
     88: 'attack'
   }
 }
@@ -21,6 +23,7 @@ const gameProp = {
 }
 
 const renderGame = () => {
+  // hero.JumpMotion();
   hero.keyMotion();
   bulletComProp.arr.forEach((arr, i)=> {
     arr.moveBullet();
@@ -31,6 +34,7 @@ const renderGame = () => {
 const windowEvent = () => {
   window.addEventListener('keydown', (e) => {
     key.keyDown[key.keyValue[e.which]] = true;
+    console.log(e.which)
   });
   window.addEventListener('keyup', (e) => {
     key.keyDown[key.keyValue[e.which]] = false;
