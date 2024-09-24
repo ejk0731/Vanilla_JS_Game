@@ -33,8 +33,12 @@ const renderGame = () => {
   setGameBackground();
   // 수리검이 생길때마다 배열에 저장되고 새로 생길때마다 그 전에 생긴 수리검도 배열로 실행되므로 성능에 문제생길 수 있음
   bulletComProp.arr.forEach((arr, i)=> {
-    // console.log(bulletComProp.arr.length)
+    console.log(bulletComProp.arr.length)
     arr.moveBullet();
+  })
+
+  allMosterComProp.arr.forEach((arr, i)=> {
+    arr.moveMonster();
   })
   window.requestAnimationFrame(renderGame);
 }
@@ -71,8 +75,8 @@ let monster;
 
 const init = () => {
   hero = new Hero('.hero'); 
-  allMosterComProp.arr[0] = new Monster(700, 7777);
-  allMosterComProp.arr[1] = new Monster(1500, 5555);
+  allMosterComProp.arr[0] = new Monster(1700, 7777);
+  // allMosterComProp.arr[1] = new Monster(1500, 5555);
   loadImg();
   windowEvent();
   renderGame();

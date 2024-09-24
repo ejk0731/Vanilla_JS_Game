@@ -6,6 +6,9 @@ class Hero {
     // 히어로가 어느쪽을 보고있는지 변수 설정
     this.direction = 'right';
     this.attackDamage = 1000;
+    this.hpProgress = 0;
+    this.hpValue = 10000;
+    this.defaultHpValue = this.hpValue;
   }
 
   keyMotion() {
@@ -56,6 +59,27 @@ class Hero {
       width: this.el.offsetWidth,
       height: this.el.offsetHeight
     }
+  }
+
+  updateHp(monsterDamage) {
+    this.hpValue = Math.max(0, this.hpValue - monsterDamage);
+    this.hpProgress = this.hpValue / this.defaultHpValue * 100;
+    console.log(this.hpValue);
+    const heroHpBox = document.querySelector('.state_box .hp span');
+    heroHpBox.style.width = this.hpProgress + '%';
+    this.crash();
+    if(this.hpValue === 0) {
+      this.dead();
+    }
+  }
+
+  crash() {
+    this.el.classList.add('crash');
+    setTimeout(()=>{this.el.classList.remove('crash')}, 400)
+  }
+
+  dead() {
+    this.el.classList.add('dead');
   }
 }
 
@@ -117,7 +141,8 @@ class Bullet {
             bulletComProp.arr.splice(i,1);
             this.el.remove();
             // console.log(bulletComProp.arr);
-            allMosterComProp.arr[j].updateHp();
+            // 충돌한 몬스터의 배열값 j를 넘겨줌
+            allMosterComProp.arr[j].updateHp(j);
           }
         }
       }
@@ -145,15 +170,19 @@ class Monster {
     this.hpNode = document.createElement('div');
     this.hpNode.className = 'hp';
     this.hpValue = hp;
-    this.hpTextNode = document.createTextNode(this.hpValue);
+    this.defaultHpValue = hp;
+    this.progress = 0;
+    this.hpInner = document.createElement('span');
     this.positionX = positionX;
-
+    this.moveX = 0;
+    this.speed = 10;
+    this.crashDamage = 100;
 
     this.init();
   }
 
   init() {
-    this.hpNode.appendChild(this.hpTextNode);
+    this.hpNode.appendChild(this.hpInner);
     this.el.appendChild(this.hpNode);
     this.el.appendChild(this.elChildren);
     this.parentNode.appendChild(this.el);
@@ -169,9 +198,44 @@ class Monster {
     }
   } 
 
-  updateHp() {
+  updateHp(index) {
     this.hpValue = Math.max(0, this.hpValue - hero.attackDamage); 
-    console.log(this.hpValue); 
-    this.el.children[0].innerText = this.hpValue;
+    this.progress = this.hpValue / this.defaultHpValue * 100;
+    // console.log(this.el.children[0].children[0]);
+    this.el.children[0].children[0].style.width = this.progress + '%'; 
+    // console.log(this.hpValue); 
+
+    if(this.hpValue === 0) {
+      this.dead(index);
+    }
+  }
+
+  dead(index) {
+    this.el.classList.add('remove');
+    setTimeout(() => this.el.remove(), 200);
+    allMosterComProp.arr.splice(index, 1);
+    console.log(allMosterComProp.arr);
+  }
+
+  moveMonster() {
+    if(this.moveX + this.positionX + this.el.offsetWidth + hero.position().left - hero.movex <= 0) {
+      this.moveX = hero.movex - this.positionX + gameProp.screenWidth - hero.position().left;
+    } else {
+      this.moveX -= this.speed;
+    }
+    // 이 값이 0 보다 같거나 작으면 몬스터가 화면 왼쪽끝에 도착한것
+    // console.log(this.moveX + this.positionX + this.el.offsetWidth) ;
+    this.el.style.transform = `translateX(${this.moveX}px)`;
+    this.crash();
+  }
+  // 몬스터가 이동할때마다 히어로와 충돌했는지 확인
+  crash() {
+    let rightDiff = 30,
+        leftDiff = 90;
+    // 히어로의 오른쪽 위치와 몬스터의 왼쪽 위치 비교
+    if(hero.position().right -  rightDiff > this.position().left && hero.position().left + leftDiff < this.position().right ) {
+      console.log('충돌');
+      hero.updateHp(this.crashDamage); 
+    }
   }
 }
