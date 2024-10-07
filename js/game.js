@@ -63,7 +63,7 @@ const windowEvent = () => {
 }
 
 const loadImg = () => {
-  const preLoadImageSrc = ['../../lib/images/ninja_attack.png', ['../../lib/images/ninja_run.png']];
+  const preLoadImageSrc = ['../lib/images/ninja_attack.png', ['../lib/images/ninja_run.png']];
   preLoadImageSrc.forEach(arr => {
     const img = new Image();
     img.src = arr;
